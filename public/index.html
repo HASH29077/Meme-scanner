@@ -1,1 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLSCAN ALPHA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
 
+:root {
+  --bg: #03040a;
+  --bg1: #080c14;
+  --bg2: #0c1020;
+  --bg3: #111827;
+  --border: #1a2235;
+  --border2: #243048;
+  --accent: #00e5ff;
+  --accent2: #7c3aed;
+  --green: #00ff88;
+  --red: #ff3b5c;
+  --yellow: #fbbf24;
+  --orange: #f97316;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #475569;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg1); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--bg1);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+}
+
+.logo span { color: var(--text3); }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.live-dot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.1em;
+}
+
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* TABS */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  background: var(--bg1);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  overflow-x: auto;
+}
+
+.tab {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* LAYOUT */
+.main { padding: 16px 20px; max-width: 1000px; margin: 0 auto; }
+
+/* STATS BAR */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+  margin-bottom: 4px;
+}
+
+.stat-val {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stat-val.green { color: var(--green); }
+.stat-val.accent { color: var(--accent); }
+
+/* CONTROLS */
+.controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-group {
+  display: flex;
+  gap: 4px;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 3px;
+}
+
+.filter-btn {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-btn:hover { color: var(--text2); }
+.filter-btn.active { background: var(--bg3); color: var(--accent); }
+
+.scan-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  padding: 8px 18px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.scan-btn:hover { opacity: 0.85; }
+.scan-btn:disabled { background: var(--bg3); color: var(--text3); cursor: not-allowed; }
+
+.sort-select {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  padding: 7px 10px;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text2);
+  cursor: pointer;
+  outline: none;
+}
+
+/* PROGRESS */
+.progress-wrap {
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  border-radius: 1px;
+  transition: width 0.4s ease;
+}
+
+/* STATUS */
+.status-line {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  margin-bottom: 12px;
+  letter-spacing: 0.06em;
+}
+
+.error-box {
+  padding: 10px 14px;
+  background: #1a0810;
+  border: 1px solid #4a1020;
+  border-radius: 5px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--red);
+  margin-bottom: 12px;
+}
+
+/* TOKEN CARDS */
+.tokens-grid { display: flex; flex-direction: column; gap: 8px; }
+
+.token-card {
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+
+.token-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--score-color, var(--border));
+  border-radius: 8px 0 0 8px;
+}
+
+.token-card:hover {
+  border-color: var(--border2);
+  background: var(--bg2);
+}
+
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.token-info { display: flex; align-items: center; gap: 10px; }
+
+.token-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text2);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.token-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+.token-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.token-sym {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 1px;
+}
+
+.token-badges {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.badge-narrative { background: #1a1040; color: #a78bfa; border: 1px solid #2d1a6e; }
+.badge-age { background: #0a1a10; color: #34d399; border: 1px solid #0d3020; }
+.badge-pump { background: #1a0a20; color: #e879f9; border: 1px solid #3d1060; }
+
+/* ALPHA SCORE */
+.alpha-block { text-align: right; flex-shrink: 0; }
+
+.alpha-score {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.alpha-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  margin-top: 3px;
+  font-weight: 600;
+}
+
+/* METRICS ROW */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.metric { }
+.metric-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: var(--text3);
+  margin-bottom: 2px;
+}
+
+.metric-val {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 500;
+}
+
+.metric-val.green { color: var(--green); }
+.metric-val.red { color: var(--red); }
+.metric-val.yellow { color: var(--yellow); }
+
+/* SCORE BAR */
+.score-components {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 8px;
+}
+
+.score-seg {
+  height: 3px;
+  border-radius: 2px;
+  flex: 1;
+  position: relative;
+}
+
+.score-seg-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+/* CHECKS ROW */
+.checks-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.check-pill {
+  font-family: var(--mono);
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+}
+
+.check-pass { background: #001a0d; color: #00cc66; border: 1px solid #003318; }
+.check-fail { background: #1a0008; color: #cc2244; border: 1px solid #330010; }
+.check-warn { background: #1a1200; color: #cc9900; border: 1px solid #332400; }
+
+/* LINKS ROW */
+.links-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.ext-link {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: var(--text3);
+  text-decoration: none;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  transition: all 0.15s;
+}
+
+.ext-link:hover { color: var(--accent); border-color: var(--accent); }
+
+/* DETAIL PANEL */
+.detail-panel {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.detail-section { }
+.detail-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--text3);
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.detail-key {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+}
+
+.detail-val {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text2);
+  font-weight: 500;
+}
+
+.score-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score-row-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.score-bar-wrap {
+  flex: 1;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--green);
+  transition: width 0.4s;
+}
+
+.score-row-val {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text2);
+  width: 30px;
+  text-align: right;
+}
+
+.entry-exit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.entry-box {
+  padding: 10px 12px;
+  background: #001a0d;
+  border: 1px solid #003318;
+  border-radius: 5px;
+}
+
+.exit-box {
+  padding: 10px 12px;
+  background: #1a0008;
+  border: 1px solid #330010;
+  border-radius: 5px;
+}
+
+.ee-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  margin-bottom: 5px;
+}
+
+.ee-label.green { color: var(--green); }
+.ee-label.red { color: var(--red); }
+.ee-text {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+/* ANALYZE PAGE */
+.analyze-wrap { max-width: 600px; margin: 0 auto; }
+.analyze-header { margin-bottom: 24px; }
+.analyze-title {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.analyze-sub {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ca-input {
+  flex: 1;
+  background: var(--bg1);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 11px 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+}
+
+.ca-input:focus { border-color: var(--accent); }
+.ca-input::placeholder { color: var(--text3); }
+
+/* SPINNER */
+.spin-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.06em;
+}
+
+.spinner {
+  width: 10px; height: 10px;
+  border: 2px solid var(--accent);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 48px 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.06em;
+  line-height: 1.8;
+}
+
+/* ALERTS */
+.alerts-list { display: flex; flex-direction: column; gap: 6px; }
+
+.alert-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.alert-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.alert-text {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text2);
+  letter-spacing: 0.04em;
+}
+
+.alert-time {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+}
+
+/* HIDDEN */
+.hidden { display: none !important; }
+
+/* API HEALTH */
+.api-health-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+.health-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text3);
+  flex-shrink: 0;
+}
+.health-dot.ok { background: var(--green); }
+.health-dot.warn { background: var(--yellow); }
+.health-dot.err { background: var(--red); }
+.health-label { color: var(--text3); }
+.health-ms { color: var(--text2); margin-left: 2px; }
+
+/* DEBUG CARD */
+.debug-card {
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+.debug-card.accepted { border-left-color: var(--green); }
+.debug-card.rejected { border-left-color: var(--red); }
+.debug-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.debug-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.debug-score { font-size: 14px; font-weight: 700; }
+.debug-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px 10px;
+  margin-bottom: 6px;
+  color: var(--text3);
+  font-size: 9px;
+}
+.debug-grid span { color: var(--text2); }
+.debug-checks { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+
+/* SUMMARY STAT */
+.sum-stat { text-align: center; }
+.sum-stat-val { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.sum-stat-label { font-size: 8px; color: var(--text3); letter-spacing: 0.1em; }
+.rej-pill {
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 9px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text3);
+}
+.rej-pill span { color: var(--red); margin-right: 4px; }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .metrics-row { grid-template-columns: repeat(3, 1fr); }
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .detail-grid { grid-template-columns: 1fr; }
+  .entry-exit-grid { grid-template-columns: 1fr; }
+  .main { padding: 12px 14px; }
+  .alpha-score { font-size: 22px; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.25s ease forwards; }
+
+/* ALERT BADGE */
+.tab-wrap { position: relative; display: inline-flex; align-items: center; }
+.alert-badge {
+  position: absolute;
+  top: 6px; right: 2px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 700;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  pointer-events: none;
+}
+
+/* COUNTDOWN */
+.countdown-bar {
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.countdown-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  border-radius: 1px;
+  transition: width 1s linear;
+}
+.auto-status {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+/* ALERT CLICKABLE */
+.alert-item { cursor: pointer; transition: background 0.15s; }
+.alert-item:hover { background: var(--bg2); }
+.alert-item.unread { border-left: 2px solid var(--red); }
+.alert-item.read { border-left: 2px solid var(--border); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">SOL<span>/</span>SCAN <span>ALPHA</span></div>
+  <div class="header-right">
+    <div class="live-dot">
+      <div class="dot"></div>
+      <span id="liveLabel">LIVE</span>
+    </div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="showTab('scanner')">SCANNER</div>
+  <div class="tab" onclick="showTab('analyze')">ANALYZE CA</div>
+  <div class="tab-wrap">
+    <div class="tab" id="alertsTab" onclick="showTab('alerts')">ALERTS</div>
+    <div class="alert-badge hidden" id="alertBadge">0</div>
+  </div>
+  <div class="tab" onclick="showTab('tracking')">TRACKING</div>
+</div>
+
+<!-- SCANNER PAGE -->
+<div id="page-scanner" class="main">
+
+  <!-- STARTUP DIAGNOSTICS BANNER -->
+  <div id="startupBanner" style="background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:12px 16px;margin-bottom:14px;font-family:var(--mono);font-size:10px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div style="color:var(--text3);letter-spacing:0.12em;font-size:9px;">API DIAGNOSTICS</div>
+      <button id="testApisBtn" onclick="runStartupDiagnostics(true)"
+        style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;padding:4px 10px;
+               background:var(--bg3);border:1px solid var(--border2);border-radius:3px;
+               color:var(--text2);cursor:pointer;">TEST APIS</button>
+    </div>
+    <div id="localModeWarn" style="display:none;padding:8px 10px;margin-bottom:10px;
+         background:#1a1000;border:1px solid #4a3000;border-radius:4px;
+         color:#fbbf24;font-size:9px;line-height:1.6;">
+      LOCAL FILE DETECTED. Chrome blocks cross-origin requests from content:// and file:// URLs.
+      APIs may fail. To fix: host this file on a local server (python3 -m http.server) or open via a web host.
+      The scanner will still load. Failed APIs are marked below.
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;" id="diagResults">
+      <span style="color:var(--text3);">Checking APIs...</span>
+    </div>
+    <div id="diagNote" style="font-size:9px;color:var(--text3);margin-bottom:8px;"></div>
+    <div id="apiCounters" style="font-size:9px;color:var(--text3);margin-bottom:8px;line-height:1.8;"></div>
+    <div id="testRawOutput" style="display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:10px;"></div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">TOKENS SCANNED</div>
+      <div class="stat-val accent" id="statScanned">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">ALPHA GEMS</div>
+      <div class="stat-val green" id="statGems">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">AVG ALPHA SCORE</div>
+      <div class="stat-val" id="statAvg">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">LAST SCAN</div>
+      <div class="stat-val" id="statTime" style="font-size:11px">NEVER</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="scan-btn" id="scanBtn" onclick="runScanner()">SCAN NOW</button>
+
+    <div class="filter-group">
+      <button class="filter-btn" id="f-age-5m" onclick="setAgeFilter('5m',this)">5M</button>
+      <button class="filter-btn" id="f-age-15m" onclick="setAgeFilter('15m',this)">15M</button>
+      <button class="filter-btn" id="f-age-30m" onclick="setAgeFilter('30m',this)">30M</button>
+      <button class="filter-btn" id="f-age-1h" onclick="setAgeFilter('1h',this)">1H</button>
+      <button class="filter-btn" id="f-age-3h" onclick="setAgeFilter('3h',this)">3H</button>
+      <button class="filter-btn active" id="f-age-6h" onclick="setAgeFilter('6h',this)">6H</button>
+    </div>
+
+    <div class="filter-group">
+      <button class="filter-btn" id="liveDiscoveryBtn" onclick="toggleLiveDiscovery()">LIVE DISCOVERY: OFF</button>
+    </div>
+
+    <div class="filter-group">
+      <button class="filter-btn active" id="f-score-35" onclick="setScoreFilter(35,this)">35+</button>
+      <button class="filter-btn" id="f-score-60" onclick="setScoreFilter(60,this)">60+</button>
+      <button class="filter-btn" id="f-score-75" onclick="setScoreFilter(75,this)">75+</button>
+      <button class="filter-btn" id="f-score-90" onclick="setScoreFilter(90,this)">90+</button>
+    </div>
+
+    <select class="sort-select" id="sortSelect" onchange="applySortAndRender()">
+      <option value="score">HIGHEST ALPHA</option>
+      <option value="age">NEWEST FIRST</option>
+      <option value="volume">HIGHEST VOLUME</option>
+      <option value="momentum">FASTEST MOMENTUM</option>
+      <option value="liquidity">MOST LIQUID</option>
+    </select>
+
+    <div class="filter-group">
+      <button class="filter-btn" id="f-pump" onclick="togglePump(this)">PUMP.FUN</button>
+    </div>
+
+    <div class="filter-group">
+      <button class="filter-btn" id="autoScanBtn" onclick="toggleAutoScan()">AUTO: OFF</button>
+    </div>
+  </div>
+
+  <div class="auto-status" id="autoStatus">AUTO-SCAN: OFF</div>
+  <div class="countdown-bar" id="countdownBar" style="display:none">
+    <div class="countdown-fill" id="countdownFill" style="width:100%"></div>
+  </div>
+
+  <div class="progress-wrap hidden" id="progressWrap">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+  </div>
+
+  <div class="status-line hidden" id="scanStatus"></div>
+  <div class="error-box hidden" id="scanError"></div>
+
+  <!-- API HEALTH BAR -->
+  <div id="apiHealthBar" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+    <div class="api-health-pill" id="health-dex">
+      <span class="health-dot" id="hdot-dex"></span>
+      <span class="health-label">DEXSCREENER</span>
+      <span class="health-ms" id="hms-dex">--</span>
+    </div>
+    <div class="api-health-pill" id="health-bird">
+      <span class="health-dot" id="hdot-bird"></span>
+      <span class="health-label">BIRDEYE</span>
+      <span class="health-ms" id="hms-bird">--</span>
+    </div>
+    <div class="api-health-pill" id="health-helius">
+      <span class="health-dot" id="hdot-helius"></span>
+      <span class="health-label">HELIUS RPC</span>
+      <span class="health-ms" id="hms-helius">--</span>
+    </div>
+    <div class="api-health-pill" id="health-rugcheck">
+      <span class="health-dot" id="hdot-rugcheck"></span>
+      <span class="health-label">RUGCHECK</span>
+      <span class="health-ms" id="hms-rugcheck">--</span>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
+      <button class="filter-btn" id="debugToggleBtn" onclick="toggleDebug()" style="border:1px solid var(--border);border-radius:3px;">DEBUG: OFF</button>
+      <button class="filter-btn" id="devPanelBtn" onclick="toggleDevPanel()" style="border:1px solid var(--border);border-radius:3px;">DEV PANEL</button>
+    </div>
+  </div>
+
+  <!-- SCAN SUMMARY -->
+  <div id="scanSummary" class="hidden" style="background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:12px 16px;margin-bottom:12px;font-family:var(--mono);font-size:10px;">
+    <div style="color:var(--text3);letter-spacing:0.12em;margin-bottom:10px;font-size:9px;">LAST SCAN SUMMARY</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;" id="summaryStats"></div>
+    <div style="color:var(--text3);letter-spacing:0.1em;margin-bottom:6px;font-size:9px;">REJECTION BREAKDOWN</div>
+    <div id="summaryRejections" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+  </div>
+
+  <!-- DEV PANEL -->
+  <div id="devPanel" class="hidden" style="background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:12px 16px;margin-bottom:12px;font-family:var(--mono);font-size:10px;max-height:320px;overflow-y:auto;">
+    <div style="color:var(--text3);letter-spacing:0.12em;margin-bottom:10px;font-size:9px;">DEVELOPER PANEL</div>
+    <div style="color:var(--text3);letter-spacing:0.1em;margin-bottom:6px;font-size:9px;">PIPELINE COUNTERS (last pass)</div>
+    <div id="pipelineCounters" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;color:var(--text3);font-size:9px;margin-bottom:10px;"></div>
+    <div style="border-top:1px solid var(--border);padding-top:8px;color:var(--text3);letter-spacing:0.1em;margin-bottom:6px;font-size:9px;">DISCOVERY SPEED (early-detection diagnostics)</div>
+    <div id="discoverySpeedStats" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;color:var(--text3);font-size:9px;margin-bottom:10px;"></div>
+    <div style="border-top:1px solid var(--border);padding-top:8px;color:var(--text3);letter-spacing:0.1em;margin-bottom:6px;font-size:9px;">LOGS</div>
+    <div id="devLogs" style="color:var(--text3);font-size:9px;line-height:1.8;"></div>
+  </div>
+
+  <!-- DEBUG LIST (all scanned tokens) -->
+  <div id="debugList" class="hidden" style="margin-bottom:12px;"></div>
+
+  <!-- NEW LAUNCHES: live discovery feed, refreshes independently of the -->
+  <!-- full enrich+score scan so brand new tokens appear within seconds. -->
+  <div id="discoverySection" class="hidden" style="margin-bottom:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.15em;color:var(--text3);">
+        NEW LAUNCHES <span id="discoveryCount" style="color:var(--accent)"></span>
+      </div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);" id="discoveryStatus">idle</div>
+    </div>
+    <div class="tokens-grid" id="discoveryGrid"></div>
+  </div>
+
+  <div class="tokens-grid" id="tokensGrid">
+    <div class="empty-state">
+      Hit SCAN NOW to discover high-alpha Solana tokens.<br>
+      Pulls from DEX Screener, Birdeye and Helius.<br>
+      Filters and scores in real time.
+    </div>
+  </div>
+</div>
+
+<!-- ANALYZE PAGE -->
+<div id="page-analyze" class="main hidden">
+  <div class="analyze-wrap">
+    <div class="analyze-header">
+      <div class="analyze-title">Analyze Contract</div>
+      <div class="analyze-sub">Paste any Solana token address for a full Alpha Score breakdown.</div>
+    </div>
+
+    <div id="analyzeInput">
+      <div class="input-row">
+        <input class="ca-input" id="caInput" placeholder="Token contract address..." />
+        <button class="scan-btn" id="analyzeBtn" onclick="analyzeCA()">ANALYZE</button>
+      </div>
+      <div class="spin-row hidden" id="analyzeSpin">
+        <div class="spinner"></div>
+        <span id="analyzeSpinText">Fetching data...</span>
+      </div>
+      <div class="error-box hidden" id="analyzeError"></div>
+    </div>
+
+    <div id="analyzeResult" class="hidden"></div>
+  </div>
+</div>
+
+<!-- ALERTS PAGE -->
+<div id="page-alerts" class="main hidden">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.15em;color:var(--text3);">RECENT ALERTS</div>
+    <button onclick="clearAlerts()" style="font-family:var(--mono);font-size:9px;padding:4px 10px;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--text3);cursor:pointer;letter-spacing:0.08em;">CLEAR ALL</button>
+  </div>
+  <div class="alerts-list" id="alertsList">
+    <div class="empty-state">No alerts yet. Enable AUTO-SCAN or run the scanner manually.</div>
+  </div>
+</div>
+
+<!-- TRACKING PAGE (observability only — read-only view over persisted data) -->
+<div id="page-tracking" class="main hidden">
+  <div class="stats-bar" id="trackingSummaryBar" style="grid-template-columns:repeat(5,1fr);margin-bottom:14px;">
+    <div class="stat-card"><div class="stat-label">TRACKED</div><div class="stat-val accent" id="trkTotal">0</div></div>
+    <div class="stat-card"><div class="stat-label">EARLY_WIN</div><div class="stat-val" style="color:#fbbf24" id="trkEarly">0</div></div>
+    <div class="stat-card"><div class="stat-label">CONFIRMED_WIN</div><div class="stat-val" style="color:#00e5ff" id="trkConfirmed">0</div></div>
+    <div class="stat-card"><div class="stat-label">RUNNERS (3x+)</div><div class="stat-val green" id="trkRunner">0</div></div>
+    <div class="stat-card"><div class="stat-label">FAILED_SETUP</div><div class="stat-val" style="color:#ff3b5c" id="trkFailed">0</div></div>
+  </div>
+
+  <div class="controls">
+    <div class="filter-group">
+      <button class="filter-btn active" id="trkViewTokens" onclick="setTrackingView('tokens')">TOKENS</button>
+      <button class="filter-btn" id="trkViewSessions" onclick="setTrackingView('sessions')">SESSIONS</button>
+    </div>
+    <div id="trkSessionFilterBadge" class="hidden" style="font-family:var(--mono);font-size:9px;color:var(--text3);display:flex;align-items:center;gap:6px;">
+      Filtered to session <span id="trkSessionFilterLabel" style="color:var(--accent)"></span>
+      <span style="cursor:pointer;color:var(--red)" onclick="clearTrackingSessionFilter()">✕ clear</span>
+    </div>
+    <button class="filter-btn" style="border:1px solid var(--border);border-radius:3px;" onclick="runScoringBacktest()">RUN SCORING BACKTEST</button>
+    <button class="filter-btn" style="margin-left:auto;border:1px solid var(--border);border-radius:3px;" onclick="clearTrackingData()">RESET TRACKING DATA</button>
+  </div>
+
+  <div id="backtestPanel" class="hidden" style="background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:14px 16px;margin-bottom:14px;font-family:var(--mono);font-size:10px;"></div>
+
+  <div id="trackingContent"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
